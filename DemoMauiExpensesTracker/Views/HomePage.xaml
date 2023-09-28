@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DemoMauiExpensesTracker.Views.HomePage"
+              xmlns:toolkit="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:viewmodel="clr-namespace:DemoMauiExpensesTracker.ViewModels"
+             x:DataType="viewmodel:HomePageViewModel"
+             xmlns:helper="clr-namespace:DemoMauiExpensesTracker.IconHelper"
+             
+             xmlns:progressBar="clr-namespace:Syncfusion.Maui.ProgressBar;assembly=Syncfusion.Maui.ProgressBar"
+              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.Accordion;assembly=Syncfusion.Maui.Expander"
+             xmlns:converter="clr-namespace:Syncfusion.Maui.Core.Converters;assembly=Syncfusion.Maui.Core"
+              xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+              xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             
+             xmlns:model="clr-namespace:DemoMauiExpensesTracker.Models"
+             BackgroundColor="#141319"
+             Shell.BackgroundColor="#141319">
+
+
+    <ContentPage.Behaviors>
+        <toolkit:StatusBarBehavior StatusBarColor="#141319" StatusBarStyle="LightContent"></toolkit:StatusBarBehavior>
+    </ContentPage.Behaviors>
+
+    <Grid RowDefinitions=".1*,.1*,.3*,.5*,Auto" ColumnDefinitions=".5*,.5*">
+
+        <!--Dashboard Icon and Header section-->
+        <Grid ColumnDefinitions=".1*,.9*" Grid.Row="0" Grid.ColumnSpan="2" Margin="10,-6,5,10" VerticalOptions="Start">
+            <Label FontFamily="Icons" Text="{x:Static helper:Icons._4d}" FontSize="24" TextColor="#EE9A22" VerticalOptions="CenterAndExpand"></Label>
+            <Label Grid.Column="2"  HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand" FontAttributes="Bold" FontFamily="Zyana" FontSize="18" Text="{Binding Title}" TextColor="White" Margin="10,10,0,10"></Label>
+        </Grid>
+
+        <!--Add fund Label Section-->
+        <Label Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="StartAndExpand" FontAttributes="Bold" FontFamily="Zyana" FontSize="18" Text="Expenses and Available Fund" TextColor="White" Margin="10,-50,0,0"></Label>
+
+        <!--Expenses and avaialable Funds section-->
+        <Grid ColumnDefinitions=".5*,.5*" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,-150,0,0">
+            <Border Grid.Column="0" BackgroundColor="#393054" HeightRequest="200" Stroke="#393054" StrokeShape="RoundRectangle 30,30,30,30" StrokeThickness="2" WidthRequest="185">
+                <VerticalStackLayout Padding="10">
+                    <HorizontalStackLayout HorizontalOptions="StartAndExpand">
+                        <Label Text="$" TextColor="White" HorizontalOptions="StartAndExpand" Margin="5,5,0,5" FontSize="18" FontAttributes="Bold" FontFamily="Zyana"></Label>
+                        <Label Text="{Binding ThisMonthExpenses}" TextColor="White" CharacterSpacing="2" HorizontalOptions="StartAndExpand" Margin="5,5,0,5" FontSize="18" FontAttributes="Bold" FontFamily="Zyana"></Label>
+                    </HorizontalStackLayout>
+                    <Label Text="Amount to be paid at ending" FontFamily="Zyana" TextColor="white" FontSize="12"></Label>
+
+                    <Grid ColumnDefinitions=".5*,.5*" Margin="0,10,0,0" ColumnSpacing="10">
+                        <VerticalStackLayout Margin="0,15,0,10" Spacing="5">
+                            <Label Text="{Binding YesterdayExpenses, StringFormat='Yesterday: {0}'}" FontSize="9" TextColor="White" FontFamily="Zyana"></Label>
+                            <progressBar:SfLinearProgressBar Progress="{Binding YesterdayProgress}" TrackFill="#33ffbe06" ProgressFill="blue"/>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Margin="0,15,0,10" Spacing="5">
+                            <Label Text="{Binding LastWeekExpenses, StringFormat='Last Week: {0}'}"  FontSize="9" TextColor="White" FontFamily="Zyana"></Label>
+                            <progressBar:SfLinearProgressBar Progress="{Binding LastWeekProgress}" TrackFill="#33ffbe06" ProgressFill="#FFffbe06"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Button Text="+ Add Expenses" FontFamily="Zyana" CornerRadius="25" BackgroundColor="#30514C" Margin="0,30,0,0" Command="{Binding GotoAddExpensePageCommand}"></Button>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Grid.Column="1" BackgroundColor="#30514C" HeightRequest="200" Stroke="#30514C" StrokeShape="RoundRectangle 30,30,30,30" StrokeThickness="2" WidthRequest="185">
+                <VerticalStackLayout Padding="10">
+                    <Label Text="Available Funds at month ending" FontFamily="Zyana" TextColor="white" FontSize="16" Padding="5" FontAttributes="Bold"></Label>
+                    <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Margin="0,10,0,17">
+                        <Label Text="$" TextColor="White" HorizontalOptions="StartAndExpand" Margin="5,5,0,5" FontSize="18" FontAttributes="Bold" FontFamily="Zyana"></Label>
+                        <Label Text="{Binding AvailableFund}" TextColor="White" CharacterSpacing="2" HorizontalOptions="StartAndExpand" Margin="5,5,0,5" FontSize="18" FontAttributes="Bold" FontFamily="Zyana"></Label>
+                    </HorizontalStackLayout>
+
+                    <Button Text="+ Add Fund" Command="{Binding AddFundPopupCommand}" FontFamily="Zyana" CornerRadius="25" BackgroundColor="#393054" Margin="0,30,0,10"></Button>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!--Graph and Chart Section-->
+        <Grid Grid.Row="3" Grid.ColumnSpan="2" Margin="0,-20,0,0">
+            <syncfusion:SfAccordion AutoScrollPosition="Top" AnimationEasing="SinOut">
+                <syncfusion:SfAccordion.Items>
+                    <!--This the bar graph Accordion 1, All Years expenses-->
+                    <syncfusion:AccordionItem>
+                        <syncfusion:AccordionItem.HeaderBackground>#2D283F</syncfusion:AccordionItem.HeaderBackground>
+                        <syncfusion:AccordionItem.Header>
+                            <Grid  HeightRequest="48">
+                                <Label Text="All Years Expenses" Margin="16,14,0,14" CharacterSpacing="0.25" FontFamily="Zyana"  FontSize="14"  TextColor="White" FontAttributes="Bold"/>
+                            </Grid>
+                        </syncfusion:AccordionItem.Header>
+                        <syncfusion:AccordionItem.Content>
+                            <Grid Margin="-10,0,15,0" Padding="10">
+                                <chart:SfCartesianChart>
+                                    <!--Here is title-->
+                                    <chart:SfCartesianChart.Title>
+                                        <Label Text="All Expenses Grouped by Year" TextColor="White" FontFamily="Zyana" HorizontalOptions="CenterAndExpand" FontSize="18"  Margin="0,15,0,10"/>
+                                    </chart:SfCartesianChart.Title>
+
+                                    <!--Defining X and Y axis-->
+                                    <chart:SfCartesianChart.XAxes>
+                                        <chart:CategoryAxis>
+                                            <chart:CategoryAxis.Title>
+                                                <chart:ChartAxisTitle Text="Year" TextColor="White" FontFamily="Zyana" FontAttributes="Bold" />
+                                            </chart:CategoryAxis.Title>
+                                            <chart:CategoryAxis.LabelStyle>
+                                                <chart:ChartAxisLabelStyle TextColor="White" FontFamily="Zyana"></chart:ChartAxisLabelStyle>
+                                            </chart:CategoryAxis.LabelStyle>
+                                        </chart:CategoryAxis>
+
+                                    </chart:SfCartesianChart.XAxes>
+                                    <chart:SfCartesianChart.YAxes>
+                                        <chart:NumericalAxis>
+                                            <chart:NumericalAxis.Title>
+                                                <chart:ChartAxisTitle Text="Amount (in Dollars)" FontFamily="Zyana" TextColor="White"/>
+                                            </chart:NumericalAxis.Title>
+                                            <chart:NumericalAxis.LabelStyle>
+                                                <chart:ChartAxisLabelStyle TextColor="White" FontFamily="Zyana"></chart:ChartAxisLabelStyle>
+                                            </chart:NumericalAxis.LabelStyle>
+                                        </chart:NumericalAxis>
+                                    </chart:SfCartesianChart.YAxes>
+
+                                    <!--Binding data-->
+                                    <chart:ColumnSeries ItemsSource="{Binding YearsData}" XBindingPath="Year" YBindingPath="TotalAmount" ShowDataLabels="True" EnableTooltip="True" PaletteBrushes="{Binding CustomBrushes}" Width="0.6" EnableAnimation="True"/>
+                                </chart:SfCartesianChart>
+                            </Grid>
+                        </syncfusion:AccordionItem.Content>
+                    </syncfusion:AccordionItem>
+
+                    <!--This is pie chart Accordion 2 Monthly expenses-->
+                    <syncfusion:AccordionItem>
+                        <syncfusion:AccordionItem.HeaderBackground>#2D283F</syncfusion:AccordionItem.HeaderBackground>
+                        <syncfusion:AccordionItem.Header>
+                            <Grid  HeightRequest="48">
+                                <Label Text="This Month" Margin="16,14,0,14" CharacterSpacing="0.25" FontFamily="Zyana"  FontSize="14" TextColor="white" FontAttributes="Bold" />
+                            </Grid>
+                        </syncfusion:AccordionItem.Header>
+                        <syncfusion:AccordionItem.Content>
+
+                            <!--Chart-->
+                            <chart:SfCircularChart WidthRequest="300" HeightRequest="300">
+
+                                <!--Here is title-->
+                                <chart:SfCircularChart.Title>
+                                    <Label Text="{Binding ThisMonth, StringFormat='{0} Expenses'}" FontSize="18" FontAttributes="Bold" FontFamily="Zyana" HorizontalOptions="CenterAndExpand" TextColor="White"/>
+                                </chart:SfCircularChart.Title>
+
+                                <chart:SfCircularChart.Legend>
+                                    <chart:ChartLegend Placement="Right" />
+                                </chart:SfCircularChart.Legend>
+
+                                <!--Here is data binding-->
+                                <chart:PieSeries ItemsSource="{Binding ThisMonthData}" XBindingPath="Name" YBindingPath="Amount" LegendIcon="SeriesType" ShowDataLabels="True" EnableTooltip="True" EnableAnimation="True"/>
+
+                            </chart:SfCircularChart>
+                        </syncfusion:AccordionItem.Content>
+                    </syncfusion:AccordionItem>
+
+                    <!--This is pie chart Accordion 3- Yearly Expenses-->
+                    <syncfusion:AccordionItem>
+                        <syncfusion:AccordionItem.HeaderBackground>#2D283F</syncfusion:AccordionItem.HeaderBackground>
+                        <syncfusion:AccordionItem.Header>
+                            <Grid  HeightRequest="48">
+                                <Label Text="Last Year" Margin="16,14,0,14" CharacterSpacing="0.25" FontFamily="Zyana"  FontSize="14" TextColor="white" FontAttributes="Bold" />
+                            </Grid>
+                        </syncfusion:AccordionItem.Header>
+                        <syncfusion:AccordionItem.Content>
+
+                            <!--Chart-->
+                            <chart:SfCircularChart WidthRequest="300" HeightRequest="300">
+
+                                <!--Here is title-->
+                                <chart:SfCircularChart.Title>
+                                    <Label Text="Last Year Expenses" FontSize="18" FontAttributes="Bold" FontFamily="Zyana" HorizontalOptions="CenterAndExpand" TextColor="White"/>
+                                </chart:SfCircularChart.Title>
+
+                                <chart:SfCircularChart.Legend>
+                                    <chart:ChartLegend Placement="Right"  />
+                                </chart:SfCircularChart.Legend>
+
+                                <!--Here is data binding-->
+                                <chart:PieSeries ItemsSource="{Binding MonthsInLastYear}" XBindingPath="Month" YBindingPath="TotalAmount" LegendIcon="SeriesType" ShowDataLabels="True" EnableTooltip="True" EnableAnimation="True"/>
+
+                            </chart:SfCircularChart>
+                        </syncfusion:AccordionItem.Content>
+                    </syncfusion:AccordionItem>
+
+                </syncfusion:SfAccordion.Items>
+            </syncfusion:SfAccordion>
+        </Grid>
+
+
+        <!--Add Fund Popup Section-->
+        <popup:SfPopup Grid.Row="4" Grid.ColumnSpan="2" ShowFooter="True" ShowCloseButton="True" IsOpen="{Binding ShowPopup}" HeaderTitle="Expenses" Padding="10" AcceptButtonText="ADD" AcceptCommand="{Binding AddFundCommand}" AnimationMode="SlideOnBottom" ShowOverlayAlways="True" OverlayMode="Blur" StaysOpen="True" FooterHeight="40">
+
+            <!--Customise popup header-->
+            <popup:SfPopup.HeaderTemplate>
+                <DataTemplate>
+                    <Label Text="Add Monthly Expenses"  FontAttributes="Bold"  FontSize="16" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                </DataTemplate>
+            </popup:SfPopup.HeaderTemplate>
+
+
+            <popup:SfPopup.ContentTemplate>
+                <DataTemplate>
+                    <!--This is the form-->
+                    <Frame>
+                        <VerticalStackLayout>
+                            <!--Add Expenses amount-->
+                            <editors:SfNumericEntry HorizontalOptions="Center" FontFamily="Zyana" Value="{Binding MyFund.Amount, Mode=TwoWay}" Placeholder="Add Funds" VerticalOptions="Center"  CustomFormat="C2" UpDownPlacementMode="Inline"  IsEditable="True" Margin="5"/>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </popup:SfPopup.ContentTemplate>
+        </popup:SfPopup>
+
+    </Grid>
+</ContentPage>

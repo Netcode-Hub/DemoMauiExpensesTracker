@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DemoMauiExpensesTracker.Views.ManageExpensesPage"
+             xmlns:viewmodel="clr-namespace:DemoMauiExpensesTracker.ViewModels"
+             
+             xmlns:inputLayout="clr-namespace:Syncfusion.Maui.Core;assembly=Syncfusion.Maui.Core"
+             xmlns:picker="clr-namespace:Syncfusion.Maui.Picker;assembly=Syncfusion.Maui.Picker"
+             xmlns:editors="clr-namespace:Syncfusion.Maui.Inputs;assembly=Syncfusion.Maui.Inputs"
+             xmlns:buttons="clr-namespace:Syncfusion.Maui.Buttons;assembly=Syncfusion.Maui.Buttons"
+             xmlns:popup="clr-namespace:Syncfusion.Maui.Popup;assembly=Syncfusion.Maui.Popup"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Maui.DataGrid;assembly=Syncfusion.Maui.DataGrid"
+             
+             x:DataType="viewmodel:ManageExpensesPageViewModel"
+             Title="{Binding Title}">
+
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add Expenses" Command="{Binding ShowAddExpensePopupCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <StackLayout>
+        <Grid RowDefinitions="*">
+            <!--Grid table-->
+            <syncfusion:SfDataGrid ItemsSource="{Binding ExpensesData}" ColumnWidthMode="Auto" AutoGenerateColumnsMode="None" HeightRequest="600" SortingMode="Single" SelectionMode="Single"  SelectedRow="{Binding SelectedRowData}" ShowSortNumbers="True">
+                <syncfusion:SfDataGrid.Columns>
+                    <syncfusion:DataGridTextColumn HeaderText="ID" MappingName="Id" />
+                    <syncfusion:DataGridTextColumn HeaderText="Expenses Name"  MappingName="Name"/>
+                    <syncfusion:DataGridTextColumn HeaderText="Expenses Amount" MappingName="Amount" Format="C2"/>
+                    <syncfusion:DataGridTextColumn HeaderText="Expenses Date" MappingName="DateAdded" Format="dd_MMM_yyyyy"/>
+                </syncfusion:SfDataGrid.Columns>
+            </syncfusion:SfDataGrid>
+        </Grid>
+
+
+        <!--Popup for adding and updating expenses, also Message popup for displaying message.-->
+        <popup:SfPopup ShowFooter="True" ShowCloseButton="True" IsOpen="{Binding ShowPopup}" HeaderTitle="Expenses" Padding="10" HeightRequest="600" AcceptButtonText="SAVE" AcceptCommand="{Binding SaveExpensesCommand}" AnimationMode="SlideOnBottom" ShowOverlayAlways="True" OverlayMode="Blur" StaysOpen="True" FooterHeight="70">
+
+            <!--Customise popup header-->
+            <popup:SfPopup.HeaderTemplate>
+                <DataTemplate>
+                    <Label Text="Add Monthly Expenses"  FontAttributes="Bold"  FontSize="16" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"/>
+                </DataTemplate>
+            </popup:SfPopup.HeaderTemplate>
+
+
+            <popup:SfPopup.ContentTemplate>
+                <DataTemplate>
+                    <!--This is the form-->
+                    <Frame>
+                        <ScrollView>
+                            <VerticalStackLayout>
+
+                                <!--Enter expenses name-->
+                                <inputLayout:SfTextInputLayout  Hint="Add Expenses Name" EnableFloating="True" ContainerType="None" OutlineCornerRadius="8" InputViewPadding="0,5,0,5"  Margin="0,0,0,10">
+                                    <Entry Text="{Binding ExpenseModel.Name, Mode=TwoWay}" FontFamily="Zyana" />
+                                </inputLayout:SfTextInputLayout>
+
+                                <!--Add Expenses amount-->
+                                <editors:SfNumericEntry HorizontalOptions="Center" FontFamily="Zyana" Value="{Binding ExpenseModel.Amount, Mode=TwoWay}" Placeholder="Add Expenses Amount" VerticalOptions="Center"  CustomFormat="C2" UpDownPlacementMode="Inline"  Minimum="0" IsEditable="True" Margin="0,0,0,10"/>
+
+                                <!--Selecte Date-->
+                                <picker:SfDatePicker HeightRequest="280"  WidthRequest="300" Format="dd_MM_yyyy" IsOpen="True" Margin="0,0,0,10" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" >
+                                    <picker:SfDatePicker.HeaderView>
+                                        <picker:PickerHeaderView Text="Select Expenses date" Height="40"/>
+                                    </picker:SfDatePicker.HeaderView>
+                                </picker:SfDatePicker>
+
+                            </VerticalStackLayout>
+                        </ScrollView>
+                    </Frame>
+                </DataTemplate>
+            </popup:SfPopup.ContentTemplate>
+
+            <!--Message Display popup-->
+            <popup:SfPopup  ShowFooter="True" AppearanceMode="OneButton" AcceptButtonText="OK" ShowCloseButton="False" IsOpen="{Binding ShowMessagePopup}" AnimationEasing="SinInOut" HeaderTitle="{Binding PopupMessageTitle}"  ShowOverlayAlways="True" Message="{Binding PopupMessage}" AcceptCommand="{Binding CloseMessagePopupCommand}" AnimationMode="SlideOnTop" OverlayMode="Blur" StaysOpen="True"/>
+        </popup:SfPopup>
+
+    </StackLayout>
+</ContentPage>
