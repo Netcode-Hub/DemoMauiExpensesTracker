@@ -25,7 +25,6 @@ namespace DemoMauiExpensesTracker
             builder.Services.AddSingleton<ServiceInterface, ServiceImplementation>();
             builder.Services.AddScoped<HomePageViewModel>();
             builder.Services.AddScoped<HomePage>();
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NHaF5cXmVCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXZccnRTRmVeWEd2V0U=");
             builder.Services.AddScoped<ManageExpensesPageViewModel>();
             builder.Services.AddScoped<ManageExpensesPage>();
 
